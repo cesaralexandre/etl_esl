@@ -55,11 +55,11 @@ padrao = pd.DataFrame({
 })
 
 def ibge(directory_path):
-    csv = pd.read_csv(f'{directory_path}/app/libs/municipio.csv', delimiter=';', dtype=str, encoding='utf-8')
+    csv = pd.read_csv(f'{directory_path}municipio.csv', delimiter=';', dtype=str, encoding='utf-8')
     return csv
 
 def inscricao(directory_path):
-    csv = pd.read_csv(f'{directory_path}/app/libs/ie.csv', delimiter=';', dtype=str, encoding='utf-8')
+    csv = pd.read_csv(f'{directory_path}ie.csv', delimiter=';', dtype=str, encoding='utf-8')
     return csv
 
 def validacao(relatorio):    
@@ -70,8 +70,8 @@ def validacao(relatorio):
 def to_csv(relatorio, name, directory_path):
     name = os.path.splitext(name)[0]
 
-    csv = f'{directory_path}/app/data/download/{name}.csv'
-    erro_csv = f'{directory_path}/app/data/download/erro_{name}.csv'
+    csv = f'{directory_path}{name}.csv'
+    erro_csv = f'{directory_path}erro_{name}.csv'
     
     relatorio['Data Emissão NF'] = relatorio['Data Emissão NF'].apply(lambda x: pd.to_datetime(x).strftime('%d/%m/%Y'))
     relatorio['Valor NF'] = relatorio['Valor NF'].apply(lambda x: '{:04.2f}'.format(float(x)).replace('.', ','))
@@ -117,7 +117,7 @@ def gerar_cpf():
     return cpf_calculado
 
 def zip(csv, erro_csv, zip, directory_path):
-    zip = f'{directory_path}/app/data/download/{zip}.zip'
+    zip = f'{directory_path}{zip}.zip'
     try:
         # Criar um arquivo ZIP
         with zipfile.ZipFile(zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -133,3 +133,13 @@ def zip(csv, erro_csv, zip, directory_path):
 
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
+
+def definir_caminho(caminho):
+    sistema_operacional = os.name  # Obtém o nome do sistema operacional ('posix' para Linux/Unix, 'nt' para Windows)
+
+    if sistema_operacional == 'posix':  # Se for Linux/Unix
+        return caminho
+    elif sistema_operacional == 'nt':  # Se for Windows
+        return caminho.replace('/', '\\\\')
+    else:
+        raise OSError("Sistema operacional não suportado")

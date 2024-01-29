@@ -1,5 +1,5 @@
 import pandas as pd
-from app.libs.utils import validacao, ibge, to_csv, gerar_cpf, padrao
+from app.libs.utils import validacao, ibge, to_csv, gerar_cpf, definir_caminho, padrao
 
 def dhl_entrega(dhl, file, directory_path):
 
@@ -15,8 +15,8 @@ def dhl_entrega(dhl, file, directory_path):
             return
         
         #Importando relatorio 455 SSW
-        relatorio = validacao(pd.read_excel(f'{directory_path}/app/data/upload/{file}', dtype=str, sheet_name='Shipment'))
-        relatorio2 = validacao(pd.read_excel(f'{directory_path}/app/data/upload/{file}', dtype=str, sheet_name='Piece'))
+        relatorio = validacao(pd.read_excel(definir_caminho(f'{directory_path}/app/data/upload/{file}'), dtype=str, sheet_name='Shipment'))
+        relatorio2 = validacao(pd.read_excel(definir_caminho(f'{directory_path}/app/data/upload/{file}'), dtype=str, sheet_name='Piece'))
 
         relatorio = relatorio.drop_duplicates(subset='HWB No')
         relatorio2 = relatorio2.drop_duplicates(subset='HWB No')
@@ -29,7 +29,7 @@ def dhl_entrega(dhl, file, directory_path):
 
         #Corrigindo campo Municipio
         relatorio['Rcvr City'] = relatorio['Rcvr State'] + '_' + relatorio['Rcvr City'].str.replace(' ', '_')
-        municipio = ibge(directory_path)
+        municipio = ibge(definir_caminho(f'{directory_path}/app/libs/'))
         relatorio = relatorio.merge(municipio[['Municipio', 'ibge']], left_on='Rcvr City', right_on='Municipio', how='left')
 
         #corrigindo o peso
@@ -77,7 +77,7 @@ def dhl_entrega(dhl, file, directory_path):
         padrao['Bairo Recebedor'] = padrao['Bairo Destinatario']
         padrao['Cidade (IBGE) Recebedor'] = padrao['Cidade (IBGE) Destinatario']
 
-        to_csv(padrao, file, directory_path)
+        to_csv(padrao, file, definir_caminho(f'{directory_path}/app/data/download/'))
 
     except Exception as e:
         print(f"Erro durante a execução: {e}")
