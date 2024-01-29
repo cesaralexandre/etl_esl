@@ -54,20 +54,58 @@ padrao = pd.DataFrame({
     'Cidade (IBGE) Recebedor': []
 })
 
-def ibge(directory_path):
+def ibge(directory_path: str) -> pd.DataFrame:
+    """
+    Carrega o arquivo CSV contendo dados IBGE.
+
+    Parâmetros:
+    - directory_path (str): O caminho do diretório onde o arquivo CSV está localizado.
+
+    Retorna:
+    pd.DataFrame: DataFrame contendo dados IBGE.
+    """
     csv = pd.read_csv(f'{directory_path}municipio.csv', delimiter=';', dtype=str, encoding='utf-8')
     return csv
 
-def inscricao(directory_path):
+def inscricao(directory_path: str) -> pd.DataFrame:
+    """
+    Carrega o arquivo CSV contendo dados de inscrição estadual.
+
+    Parâmetros:
+    - directory_path (str): O caminho do diretório onde o arquivo CSV está localizado.
+
+    Retorna:
+    pd.DataFrame: DataFrame contendo dados de inscrição estadual.
+    """
     csv = pd.read_csv(f'{directory_path}ie.csv', delimiter=';', dtype=str, encoding='utf-8')
     return csv
 
-def validacao(relatorio):    
+def validacao(relatorio: pd.DataFrame) -> pd.DataFrame:
+    """
+    Realiza a validação dos dados no DataFrame.
+
+    Parâmetros:
+    - relatorio (pd.DataFrame): DataFrame contendo os dados a serem validados.
+
+    Retorna:
+    pd.DataFrame: DataFrame validado.
+    """   
     relatorio = relatorio.applymap(lambda x: x.upper() if isinstance(x, str) else x) # Transforma todo dataframe em maiuscula
     relatorio = relatorio.applymap(lambda texto: unidecode(texto) if isinstance(texto, str) else texto) # Transforma todo datraframe sem acentuacao
     return relatorio
 
-def to_csv(relatorio, name, directory_path):
+def to_csv(relatorio: pd.DataFrame, name: str, directory_path: str) -> None:
+    """
+    Converte e salva um DataFrame em arquivos CSV.
+
+    Parâmetros:
+    - relatorio (pd.DataFrame): DataFrame a ser convertido e salvo.
+    - name (str): Nome do arquivo CSV a ser salvo.
+    - directory_path (str): O caminho do diretório onde os arquivos CSV serão salvos.
+
+    Retorna:
+    None
+    """
     name = os.path.splitext(name)[0]
 
     csv = f'{directory_path}{name}.csv'
@@ -85,7 +123,13 @@ def to_csv(relatorio, name, directory_path):
 
     zip(csv, erro_csv, name, directory_path)
 
-def gerar_cpf():
+def gerar_cpf() -> str:
+    """
+    Gera um número de CPF válido aleatoriamente.
+
+    Retorna:
+    str: Número de CPF gerado.
+    """
     # Gera os oito primeiros dígitos aleatórios
     oito_digitos = ''.join([str(random.randint(0, 9)) for _ in range(8)])
     
@@ -116,7 +160,19 @@ def gerar_cpf():
     
     return cpf_calculado
 
-def zip(csv, erro_csv, zip, directory_path):
+def zip_arquivos(csv: str, erro_csv: str, nome_zip: str, directory_path: str) -> None:
+    """
+    Compacta arquivos CSV em um arquivo ZIP.
+
+    Parâmetros:
+    - csv (str): Caminho para o primeiro arquivo CSV.
+    - erro_csv (str): Caminho para o segundo arquivo CSV.
+    - nome_zip (str): Nome do arquivo ZIP a ser criado.
+    - directory_path (str): O caminho do diretório onde o arquivo ZIP será salvo.
+
+    Retorna:
+    None
+    """
     zip = f'{directory_path}{zip}.zip'
     try:
         # Criar um arquivo ZIP
@@ -134,7 +190,16 @@ def zip(csv, erro_csv, zip, directory_path):
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
 
-def definir_caminho(caminho):
+def definir_caminho(caminho: str) -> str:
+    """
+    Adapta o caminho do diretório conforme o sistema operacional.
+
+    Parâmetros:
+    - caminho (str): Caminho do diretório a ser adaptado.
+
+    Retorna:
+    str: Caminho adaptado ao sistema operacional.
+    """
     sistema_operacional = os.name  # Obtém o nome do sistema operacional ('posix' para Linux/Unix, 'nt' para Windows)
 
     if sistema_operacional == 'posix':  # Se for Linux/Unix

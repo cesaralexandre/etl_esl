@@ -1,7 +1,29 @@
 import pandas as pd
 from app.libs.utils import validacao, ibge, to_csv, gerar_cpf, definir_caminho, padrao
 
-def dhl_entrega(dhl, file, directory_path):
+
+def dhl_entrega(dhl: str, arquivo: str, caminho_diretorio: str) -> None:
+    """
+    Processa os dados de entrega da DHL e gera um arquivo CSV padronizado.
+
+    Parâmetros:
+    - dhl (str): O código de localização da DHL ('POA', 'BNU', 'CWB', etc.).
+    - arquivo (str): O nome do arquivo Excel de entrada contendo dados de remessa e peça.
+    - caminho_diretorio (str): O caminho do diretório onde os arquivos de entrada e saída estão localizados.
+
+    Retorna:
+    None
+
+    A função lê os dados de remessa e peça do arquivo Excel de entrada, realiza validação,
+    limpeza e padronização dos dados. Em seguida, gera um arquivo CSV com dados padronizados para uso futuro.
+
+    Observação:
+    - A função utiliza funções utilitárias externas do módulo 'app.libs.utils'.
+    - O arquivo CSV é salvo no diretório 'app/data/download/'.
+
+    Exemplo:
+        dhl_entrega('POA', 'dados_remessa.xlsx', '/caminho/do/diretorio')
+    """
 
     try:
         if dhl=='POA':
@@ -15,8 +37,8 @@ def dhl_entrega(dhl, file, directory_path):
             return
         
         #Importando relatorio 455 SSW
-        relatorio = validacao(pd.read_excel(definir_caminho(f'{directory_path}/app/data/upload/{file}'), dtype=str, sheet_name='Shipment'))
-        relatorio2 = validacao(pd.read_excel(definir_caminho(f'{directory_path}/app/data/upload/{file}'), dtype=str, sheet_name='Piece'))
+        relatorio = validacao(pd.read_excel(definir_caminho(f'{caminho_diretorio}/app/data/upload/{arquivo}'), dtype=str, sheet_name='Shipment'))
+        relatorio2 = validacao(pd.read_excel(definir_caminho(f'{caminho_diretorio}/app/data/upload/{arquivo}'), dtype=str, sheet_name='Piece'))
 
         relatorio = relatorio.drop_duplicates(subset='HWB No')
         relatorio2 = relatorio2.drop_duplicates(subset='HWB No')
@@ -29,7 +51,7 @@ def dhl_entrega(dhl, file, directory_path):
 
         #Corrigindo campo Municipio
         relatorio['Rcvr City'] = relatorio['Rcvr State'] + '_' + relatorio['Rcvr City'].str.replace(' ', '_')
-        municipio = ibge(definir_caminho(f'{directory_path}/app/libs/'))
+        municipio = ibge(definir_caminho(f'{caminho_diretorio}/app/libs/'))
         relatorio = relatorio.merge(municipio[['Municipio', 'ibge']], left_on='Rcvr City', right_on='Municipio', how='left')
 
         #corrigindo o peso
@@ -77,7 +99,7 @@ def dhl_entrega(dhl, file, directory_path):
         padrao['Bairo Recebedor'] = padrao['Bairo Destinatario']
         padrao['Cidade (IBGE) Recebedor'] = padrao['Cidade (IBGE) Destinatario']
 
-        to_csv(padrao, file, definir_caminho(f'{directory_path}/app/data/download/'))
+        to_csv(padrao, arquivo, definir_caminho(f'{caminho_diretorio}/app/data/download/'))
 
     except Exception as e:
         print(f"Erro durante a execução: {e}")
