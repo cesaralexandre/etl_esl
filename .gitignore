@@ -8,12 +8,14 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+app/data/download/*.zip
+app/data/upload/*.xlsx
+.devcontainer
+.github
 build/
 develop-eggs/
 dist/
 downloads/
-app/data/download/*.zip
-app/data/upload/*.xlsx
 eggs/
 .eggs/
 lib/
