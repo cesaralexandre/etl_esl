@@ -61,7 +61,7 @@ def dhl_entrega(dhl: str, arquivo: str, caminho_diretorio: str) -> None:
         relatorio['Value'] = relatorio['Value'].apply(lambda x: 1 if float(x) == 0 else float(x))
         
         #Dados Mercadoria'
-        padrao['Nota Fiscal'] = relatorio['HWB No']
+        padrao['Nota Fiscal'] = relatorio['HWB No'].str[-6:]
         padrao['Série NF'] = 1
         padrao['Data Emissão NF'] = relatorio['Clock Start']    
         padrao['Nº Pedido'] = relatorio['HWB No']
