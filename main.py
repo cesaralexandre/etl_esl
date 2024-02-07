@@ -4,4 +4,4 @@ import os
 
 directory_path = os.getcwd()
 
-dhl_entrega('POA', 'dhl.xlsx', directory_path)
+dhl_entrega('CWB', 'dhl.xlsx', directory_path)

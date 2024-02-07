@@ -1,5 +1,5 @@
 import pandas as pd
-from app.libs.utils import validacao, ibge, to_csv, gerar_cpf, definir_caminho, padrao
+from app.libs.utils import validacao, ibge, to_csv, gerar_cpf, definir_caminho, formatar_codigo_postal, padrao
 
 
 def dhl_entrega(dhl: str, arquivo: str, caminho_diretorio: str) -> None:
@@ -86,7 +86,7 @@ def dhl_entrega(dhl: str, arquivo: str, caminho_diretorio: str) -> None:
         #Dados Destinatário
         padrao['Nome do Destinatario'] = relatorio['Receiver Name']
         padrao['CNPJ/CPF do destinatário'] = relatorio['Receiver Name'].apply(lambda x: gerar_cpf())
-        padrao['CEP Destinatario'] = ''
+        padrao['CEP Destinatario'] = relatorio['Rcvr Postcode'].apply(lambda x: formatar_codigo_postal(x))
         padrao['Rua Destinatario'] = relatorio['Rcvr Addr 1']
         padrao['Bairo Destinatario'] = ''
         padrao['Cidade (IBGE) Destinatario'] = relatorio['ibge']

@@ -1,4 +1,5 @@
 import os
+import re
 import random
 import zipfile
 import pandas as pd
@@ -121,7 +122,7 @@ def to_csv(relatorio: pd.DataFrame, name: str, directory_path: str) -> None:
     com_ibge.to_csv(csv, index=False, sep=';', encoding='utf-8-sig')
     sem_ibge.to_csv(erro_csv, index=False, sep=';', encoding='utf-8-sig')
 
-    zip(csv, erro_csv, name, directory_path)
+    zip_arquivos(csv, erro_csv, name, directory_path)
 
 def gerar_cpf() -> str:
     """
@@ -173,7 +174,7 @@ def zip_arquivos(csv: str, erro_csv: str, nome_zip: str, directory_path: str) ->
     Retorna:
     None
     """
-    zip = f'{directory_path}{zip}.zip'
+    zip = f'{directory_path}{nome_zip}.zip'
     try:
         # Criar um arquivo ZIP
         with zipfile.ZipFile(zip, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -208,3 +209,19 @@ def definir_caminho(caminho: str) -> str:
         return caminho.replace('/', '\\\\')
     else:
         raise OSError("Sistema operacional não suportado")
+
+def formatar_codigo_postal(codigo_postal):
+    # Remover todos os caracteres não numéricos
+    codigo_postal = re.sub(r'\D', '', codigo_postal)
+
+    # Adicionar '-000' se o comprimento for 5
+    if len(codigo_postal) == 5:
+        codigo_postal += '-001'
+    # Adicionar zeros à esquerda se o comprimento for menor que 8
+    elif len(codigo_postal) < 8:
+        codigo_postal = codigo_postal.zfill(8)
+
+    # Formatar para o padrão "00000-000"
+    codigo_postal_formatado = f'{codigo_postal[:5]}-{codigo_postal[5:]}'
+    
+    return codigo_postal_formatado
