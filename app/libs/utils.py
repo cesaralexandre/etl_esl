@@ -216,7 +216,7 @@ def formatar_codigo_postal(codigo_postal):
 
     # Adicionar '-000' se o comprimento for 5
     if len(codigo_postal) == 5:
-        codigo_postal += '-001'
+        codigo_postal += '001'
     # Adicionar zeros à esquerda se o comprimento for menor que 8
     elif len(codigo_postal) < 8:
         codigo_postal = codigo_postal.zfill(8)
