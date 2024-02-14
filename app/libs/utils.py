@@ -211,6 +211,9 @@ def definir_caminho(caminho: str) -> str:
         raise OSError("Sistema operacional não suportado")
 
 def formatar_codigo_postal(codigo_postal):
+    if not isinstance(codigo_postal, str):
+        codigo_postal = str(codigo_postal)  # Convertendo para string se não for
+        
     # Remover todos os caracteres não numéricos
     codigo_postal = re.sub(r'\D', '', codigo_postal)
 
